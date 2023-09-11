@@ -5,6 +5,9 @@ function resolve(dir) {
 const name = '专业在线聊天室' // page title
 module.exports = {
   lintOnSave: false,
+  devServer:{
+    open:true
+  },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
@@ -15,4 +18,4 @@ module.exports = {
       }
     }
   },
-}
+}   

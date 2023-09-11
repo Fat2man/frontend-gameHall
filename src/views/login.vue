@@ -62,10 +62,18 @@ export default {
     onSubmit() {
       let rulesform = "form";
       this.$refs[rulesform].validate((valid) => {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-        }, 500);
+        if (valid) {
+          this.loading = true;
+          setTimeout(() => {
+            this.loading = false;
+            this.$message({
+              message: "登录成功！",
+              type: "info",
+              duration: 1500,
+            });
+            this.$router.push("home");
+          }, 500);
+        }
       });
     },
   },
