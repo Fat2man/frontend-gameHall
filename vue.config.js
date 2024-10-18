@@ -4,9 +4,10 @@ function resolve(dir) {
 }
 const name = '专业在线聊天室' // page title
 module.exports = {
+  publicPath: './',
   lintOnSave: false,
-  devServer:{
-    open:true
+  devServer: {
+    open: true
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -14,7 +15,7 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
       }
     }
   },
