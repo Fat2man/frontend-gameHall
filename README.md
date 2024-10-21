@@ -1,3 +1,5 @@
+Vue游戏大厅项目介绍
+预览地址：http://jxtech.fun/#/
 # chat
 
 ## Project setup
