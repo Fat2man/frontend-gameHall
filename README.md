@@ -14,11 +14,7 @@
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554600042.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554600042.png)
 
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554678465.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554678465.png)
-
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554720382.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554720382.png)
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554821975.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554821975.png)
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554849641.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554849641.png)
 
