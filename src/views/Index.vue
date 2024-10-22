@@ -86,7 +86,6 @@ export default {
 <style lang="stylus" scoped>
 .Index
   height 100vh
-  // background-color #b1dced
   min-width 750px
   min-height 555px
   background-image url('../assets/hall.jpg')
