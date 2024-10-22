@@ -10,8 +10,6 @@
 
 #### 效果图
 
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554565228.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554565228.png)
-
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554572302.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554572302.png)
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554600042.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554600042.png)
