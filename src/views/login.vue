@@ -182,9 +182,6 @@ export default {
         }
       });
     }
-  },
-  mounted() {
-    console.log(this.$socket, "$socket");
   }
 };
 </script>

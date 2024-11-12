@@ -1,47 +1,85 @@
 <template>
-  <div class="Index">
-    <Header></Header>
-    <div class="Index-box">
-      <div class="box-left">
-        <div class="reel" style="--p: 5">
-          <div class="reel-bg"></div>
-        </div>
-        <article>
-          <img src="~@/assets/tip.png" style="object-fit:scale-down" />
-        </article>
+  <div class="index">
+    <el-header height="80px" class="header">
+      <div class="title-container">
+        <h1 class="title">游戏大厅</h1>
+        <el-button class="logout-btn" type="text" @click="handleLogout">
+          <i class="el-icon-switch-button"></i> 退出
+        </el-button>
       </div>
-      <div class="box-right">
-        <div
-          class="gameOne"
-          v-for="(item,index) in gameArr"
-          :key="index"
-          @click="goGame(item.name)"
-          v-click-sound
-        >
-          <span>{{item.name}}</span>
+    </el-header>
+    
+    <el-container class="main-container">
+      <el-aside width="350px" class="sidebar" v-show="!isMobile">
+        <div class="dynamic-banner">
+          <div class="banner-content">
+            <div class="banner-animation"></div>
+          </div>
         </div>
-      </div>
-    </div>
+        <el-card class="welcome-card">
+          <div slot="header" class="welcome-header">
+            <span class="welcome-title">欢迎来到游戏大厅</span>
+          </div>
+          <div class="welcome-content">
+            <p>这里有精彩的多人游戏和聊天室等着你。快来加入我们，开始你的游戏之旅吧！</p>
+          </div>
+        </el-card>
+      </el-aside>
+      
+      <el-main class="game-container">
+        <div class="game-grid">
+          <div 
+            v-for="(item, index) in gameArr" 
+            :key="index"
+            class="game-card"
+            :class="{'game-card-landlord': item.name === '多人斗地主'}"
+            @click="goGame(item.name)"
+          >
+            <div class="game-card-inner">
+              <div class="game-icon">
+                <i :class="item.icon"></i>
+              </div>
+              <h3 class="game-title">{{ item.name }}</h3>
+              <div class="game-description">{{ item.description }}</div>
+              <div class="game-players">
+                <span class="online-dot"></span>
+                {{ item.players }}人在线
+              </div>
+            </div>
+            <div class="card-overlay"></div>
+          </div>
+        </div>
+      </el-main>
+    </el-container>
   </div>
 </template>
+
 <script>
 import { L2Dwidget } from "live2d-widget";
 import Header from "../components/header.vue";
 export default {
   name: "Index",
-  components: {
+  components:{
     Header
   },
   data() {
     return {
       gameArr: [
-        { name: "多人斗地主", pic: "" },
-        // { name: "画图猜字", pic: "" },
-        // { name: "朋友圈", pic: "" },
-        // { name: "看视频", pic: "" },
-        // { name: "听音乐", pic: "" },
-        { name: "聊天室", pic: "" }
-      ]
+        { 
+          name: "多人斗地主", 
+          icon: "el-icon-star-on",
+          description: "经典棋牌游戏，随时开局",
+          players: "1,234"
+        },
+        { 
+          name: "聊天室", 
+          icon: "el-icon-chat-dot-round",
+          description: "畅聊交友，结识新伙伴",
+          players: "856"
+        }
+      ],
+      isMobile: false,
+      windowWidth: window.innerWidth
     };
   },
   methods: {
@@ -51,148 +89,309 @@ export default {
       } else if (name === "多人斗地主") {
         this.$router.push("/pokerHall");
       }
+    },
+    handleLogout() {
+      this.$router.push('/');
+    },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+      this.isMobile = window.innerWidth <= 768;
     }
   },
-  created() {
-    setTimeout(function() {
-      L2Dwidget.init({
-        model: {
-          jsonPath:
-            "https://cdn.jsdelivr.net/gh/wangsrGit119/wangsr-image-bucket/L2Dwidget/live2d-widget-model-haruto/assets/haruto.model.json"
-        }
-      });
-    }, 1000);
-  },
   mounted() {
-    if (!CSS.supports("animation-timeline: scroll()")) {
-      console.log("不支持 animation-timeline");
-      const bg = document.querySelector(".reel-bg");
-      const boxLeft = document.querySelector(".box-left");
-      boxLeft.addEventListener("scroll", function() {
-        console.log("this.scrollTop", this.scrollTop);
-        bg.style.transform = `translateY(${(((this.scrollTop / Math.PI) % 184) /
-          368) *
-          100 -
-          80}%)`;
-      });
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+    // 只在非移动端初始化 live2d
+    if (!this.isMobile) {
+      setTimeout(() => {
+        L2Dwidget.init({
+          model: {
+            jsonPath: "https://cdn.jsdelivr.net/gh/wangsrGit119/wangsr-image-bucket/L2Dwidget/live2d-widget-model-haruto/assets/haruto.model.json"
+          }
+        });
+      }, 1000);
     }
   },
   beforeDestroy() {
-    document.querySelector("#live2d-widget").remove(); //离开页面时销毁L2Dwidget
+    window.removeEventListener('resize', this.handleResize);
+    const widget = document.querySelector("#live2d-widget");
+    if (widget) widget.remove();
   }
 };
 </script>
 
 <style lang="stylus" scoped>
-.Index
-  height 100vh
-  min-width 750px
-  min-height 555px
-  background-image url('../assets/hall.jpg')
-  background-repeat no-repeat
-  background-size cover
-  .Index-box
-    display flex
-    height calc(100% - 3.75rem)
-    .box-left
-      flex 1
-      align-self flex-start
-      background-color #22312D
-      font-family '楷体', '楷体_GB2312', 'KaiTi', serif
-      overflow auto
-      height 60%
-      min-width 300px
-      min-height 500px
-      &::-webkit-scrollbar
-        display none
-      &:before
-        content ''
-        display block
-        height 30px
-        background-color #22312D
-        position sticky
-        top 0
-      article
-        background-color #F5EBD4
-        padding 1em 0.5em
-        border-left 10px solid #405C53
-        border-right 10px solid #405C53
-        margin 0 15px
-      p
-        margin 0
-        padding 0.2em 0
-        color #2C402E
-        line-height 150%
-        text-indent 2em
-      h1
-        text-align center
-        color #F5EBD4
-      .reel
-        position sticky
-        top 10px
-        height 28px
-        margin 0 15px
-        border-radius 1px
-        border-image url('https://imgservices-1252317822.image.myqcloud.com/coco/s04232024/c510959b.0txvec.png') fill 40 36 / 14px 12px / 0 12px
-        box-shadow 0 5px 10px 5px rgba(0, 0, 0, 0.3), 0 10px 20px 10px rgba(0, 0, 0, 0.5)
-        overflow hidden
-      .reel-bg
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&display=swap')
+
+.index
+  min-height 100vh
+  background linear-gradient(135deg, #1a1c2c 0%, #4a1942 50%, #893168 100%)
+  overflow hidden
+.header
+  background linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))
+  backdrop-filter blur(10px)
+  border-bottom 1px solid rgba(255, 255, 255, 0.1)
+  display flex
+  justify-content center
+  align-items center
+
+.title-container
+  position relative
+  display flex
+  justify-content center
+  align-items center
+  width 100%
+
+  .logout-btn
+    position absolute!important
+    right 20px
+    color #fff
+    font-size 16px
+    
+    &:hover
+      color #FFD700
+      
+    i
+      margin-right 5px
+
+.title
+  font-family 'Noto Serif SC', serif
+  font-size 36px
+  font-weight 700
+  color #fff
+  text-shadow 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5)
+  margin 0
+  padding 10px 30px
+  background linear-gradient(45deg, #FFD700, #FFA500)
+  -webkit-background-clip text
+  -webkit-text-fill-color transparent
+  animation titleGlow 2s ease-in-out infinite alternate
+  @media (max-width: 768px)
+    font-size 24px
+    padding 5px 15px
+
+.title-decoration
+  position absolute
+  top 50%
+  width 100px
+  height 2px
+  background linear-gradient(to right, transparent, #FFD700, transparent)
+
+  &.left
+    left 0
+    transform translateY(-50%) translateX(-120%)
+  @media (max-width: 768px)
+    width 60px
+    
+    &.left
+      transform translateY(-50%) translateX(-80%)
+    
+    &.right
+      right 0
+      transform translateY(-50%) translateX(120%)
+      transform translateY(-50%) translateX(80%)
+
+@keyframes titleGlow
+  from
+    text-shadow 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5)
+  to
+    text-shadow 0 0 15px rgba(255, 215, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7)
+    
+.main-container
+  height calc(100vh - 80px)
+  @media (max-width: 768px)
+    height auto
+    min-height calc(100vh - 80px)
+
+.sidebar
+  background rgba(255, 255, 255, 0.05)
+  backdrop-filter blur(10px)
+  border-right 1px solid rgba(255, 255, 255, 0.1)
+  padding 20px
+  
+  .dynamic-banner
+    height 80px
+    margin-bottom 20px
+    background linear-gradient(45deg, #1a1c2c, #4a1942)
+    border-radius 10px
+    overflow hidden
+    position relative
+    
+    .banner-content
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      
+      .banner-animation
         position absolute
-        left 0
-        width 100%
-        height 368px
-        background url('https://imgservices-1252317822.image.myqcloud.com/coco/s04232024/682ad393.to0id6.jpg') 50% 0 / auto 50%
-        mix-blend-mode multiply
-      @supports (animation-timeline scroll())
-        .reel-bg
-          --s 999999
-          animation scroll 1s linear forwards calc((var(--s) / 184 / 3.14))
-          animation-timeline scroll()
-          animation-range 0 calc(var(--s) * 1px)
-      @keyframes scroll
-        0%
-          transform translateY(-80%)
-        100%
-          transform translateY(-30%)
-    .box-right
-      flex 3
-      display flex
-      flex-wrap wrap
-      justify-content space-around
-      align-items center
-      .gameOne
-        width 30%
-        height 20%
-        box-shadow 1px 0px 5px 0px #ccc
-        border-radius 5px
-        transition transform 0.3s
-        display flex
-        justify-content center
-        align-items center
-        &:nth-child(1)
-          background-image linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)
-        &:nth-child(2)
-          background-image linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)
-        // &:nth-child(3) {
-        // background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-        // }
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
+        width 200%
+        height 200%
+        background radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%, transparent 20%, rgba(255,255,255,0.1) 20.5%, transparent 30%)
+        background-size 50px 50px
+        animation rotate 20s linear infinite, pulse 4s ease-in-out infinite alternate
+        
+  .welcome-card
+    background rgba(255, 255, 255, 0.1)
+    border none
+    color #fff
+    
+    .welcome-header
+      background rgba(255, 255, 255, 0.1)
+      padding 15px
+      
+      .welcome-title
+        font-size 20px
+        font-weight bold
+        
+    .welcome-content
+      padding 20px
+      line-height 1.6
+      
+.game-container
+  padding 40px
+  display flex
+  align-items center
+  justify-content center
+  @media (max-width: 768px)
+    padding 20px
 
-        // &:nth-child(4) {
-        // background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-        // }
+.game-grid
+  display grid
+  grid-template-columns repeat(2, 1fr)
+  gap 40px
+  width 100%
+  max-width 1200px
+  @media (max-width: 1024px)
+    gap 20px
+    
+  @media (max-width: 768px)
+    grid-template-columns 1fr
+    padding 10px
 
-        // &:nth-child(5) {
-        // background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-        // }
+.game-card
+  position relative
+  height 300px
+  border-radius 20px
+  overflow hidden
+  cursor pointer
+  background rgba(255, 255, 255, 0.1)
+  backdrop-filter blur(5px)
+  transition all 0.3s ease
+  
+  &:hover
+    transform translateY(-10px)
+    box-shadow 0 20px 40px rgba(0, 0, 0, 0.3)
+    
+    .card-overlay
+      opacity 0.8
+      
+    .game-title
+      transform translateY(-5px)
+      
+  &.game-card-landlord
+    background linear-gradient(45deg, #ff6b6b, #feca57)
+    
+    .card-overlay
+      background linear-gradient(45deg, #ff6b6b88, #feca5788)
+      
+  .game-card-inner
+    position relative
+    z-index 2
+    height 100%
+    padding 30px
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    color #fff
+    
+  .game-icon
+    font-size 48px
+    margin-bottom 20px
+    
+    i
+      background linear-gradient(135deg, #fff, #ffd700)
+      -webkit-background-clip text
+      -webkit-text-fill-color transparent
+      
+  .game-title
+    font-size 28px
+    font-weight bold
+    margin-bottom 15px
+    transition transform 0.3s ease
+    text-shadow 0 2px 4px rgba(0, 0, 0, 0.3)
+    
+  .game-description
+    font-size 16px
+    opacity 0.9
+    text-align center
+    margin-bottom 20px
+    
+  .game-players
+    font-size 14px
+    display flex
+    align-items center
+    gap 8px
+    
+    .online-dot
+      width 8px
+      height 8px
+      border-radius 50%
+      background #4cd137
+      box-shadow 0 0 10px #4cd137
+      animation pulse 2s infinite
+      
+  .card-overlay
+    position absolute
+    top 0
+    left 0
+    right 0
+    bottom 0
+    background linear-gradient(45deg, rgba(76, 209, 55, 0.3), rgba(68, 189, 255, 0.3))
+    opacity 0
+    transition opacity 0.3s ease
+    
+@keyframes pulse
+  0%
+    transform scale(1)
+    opacity 1
+  50%
+    transform scale(1.2)
+    opacity 0.7
+  100%
+    transform scale(1)
+    opacity 1
 
-        // &:nth-child(6) {
-        // background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%);
-        // }
-        &:hover
-          transform scale(1.1)
-      span
-        font-size 25px
-        letter-spacing 1px
-        font-weight 700
-        font-family 'AlimamaFangYuanTiVF-Thin'
+@keyframes shine
+  0%
+    left -100%
+  100%
+    left 100%
+
+@keyframes rotate
+  0%
+    transform translate(-50%, -50%) rotate(0deg)
+  100%
+    transform translate(-50%, -50%) rotate(360deg)
+
+@keyframes pulse
+  0%
+    opacity 0.5
+    background-size 50px 50px
+  100%
+    opacity 1
+    background-size 60px 60px
+
+#live2d-widget
+  position fixed !important
+  right 0
+  bottom 0
+  z-index 999
+  @media (max-width: 768px)
+    display none !important
 </style>
