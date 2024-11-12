@@ -1,19 +1,20 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import login from '@/views/login.vue'
+import login1 from '@/views/login1.vue'
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    // {
+    //   path: '/',
+    //   name: 'login',
+    //   component: login
+    // },
     {
       path: '/',
-      name: 'login',
-      component: login
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import(/* webpackChunkName: "Home" */ './views/pocker/test.vue')
+      name: 'login1',
+      component: login1
     },
     {
       path: '/regUser',

@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.prototype.$AXIOS = AXIOS
-Vue.prototype.$basrUrl = 'http://182.92.108.102:8000/'
+Vue.prototype.$basrUrl = 'http://8.140.238.198:8000/'
 new Vue({
   router,
   store,
