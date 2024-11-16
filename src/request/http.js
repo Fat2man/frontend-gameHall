@@ -1,7 +1,7 @@
 import axios from 'axios'
 import router from '../router'
 import ElementUI from 'element-ui';
-const baseURL = 'http://182.92.108.102:8000/'
+const baseURL = 'http://8.140.238.198:8000/'
 const instance = axios.create({
   baseURL: baseURL,
   timeout: 12000,

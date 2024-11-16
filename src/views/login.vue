@@ -1,283 +1,518 @@
 <template>
-  <div class="login">
-    <el-container class="box">
-      <el-main>
-        <div class="form-header">江雪休闲大厅</div>
-        <el-form v-show="flag" ref="form" :model="formLogin" :rules="rulesform">
-          <el-form-item prop="name" style="margin: 30px 30px 20px">
-            <el-input
-              v-model.trim="formLogin.name"
-              placeholder="请输入账号/手机号"
-              @keyup.13.native="onSubmit"
-            >
-              <i slot="prefix" class="el-input__icon el-icon-user"></i>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="password" style="margin: 20px 30px 30px 30px">
-            <el-input
-              v-model.trim="formLogin.password"
-              type="password"
-              placeholder="请输入密码"
-              @keyup.13.native="onSubmit"
-            >
-              <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              :loading="loading"
-              @click="onSubmit"
-              style="width: 350px;font-size:16px"
-            >登 录</el-button>
-          </el-form-item>
-        </el-form>
-        <el-form v-show="!flag" ref="form" :model="formReg" label-width="60px" :rules="rulesform">
-          <el-form-item prop="regName" label="账号" class="formLine" style="margin: 20px 30px">
-            <el-input v-model.trim="formReg.regName" placeholder="账号" @keyup.13.native="onSubmit">
-              <i slot="prefix" class="el-input__icon el-icon-user"></i>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="regPassword" label="密码" class="formLine" style="margin: 20px 30px">
-            <el-input
-              v-model.trim="formReg.regPassword"
-              placeholder="密码"
-              @keyup.13.native="onSubmit"
-            >
-              <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="regAvatar" label="头像" class="formLine">
-            <el-upload
-              class="avatar-uploader"
-              :action="$basrUrl + 'api/uploadPicture'"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img v-if="formReg.regAvatar" :src="formReg.regAvatar" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label-width="0px">
-            <el-button
-              type="primary"
-              :loading="loading"
-              @click="onSubmit"
-              style="width: 350px;font-size:16px"
-            >注 册</el-button>
-          </el-form-item>
-        </el-form>
-        <div class="regUser" @click="regUser">{{flag ? '注 册' : '登 录'}}</div>
-      </el-main>
-    </el-container>
+  <div class="auth-container">
+    <div class="auth-box" :class="{ 'show-register': showRegister }">
+      <div class="forms-container">
+        <div class="login-register-form login" :class="{ 'form-hidden': showRegister }">
+          <div class="title-wrapper">
+            <div class="title">江雪休闲大厅</div>
+            <div class="title-decoration left"></div>
+            <div class="title-decoration right"></div>
+          </div>
+          <form @submit.prevent="handleLogin" class="auth-form">
+            <div class="input-group">
+              <i class="user-icon">👤</i>
+              <input type="text" v-model="loginForm.username" placeholder="请输入账号/手机号" required />
+            </div>
+
+            <div class="input-group">
+              <i class="lock-icon">🔒</i>
+              <input type="password" v-model="loginForm.password" placeholder="请输入密码" required />
+            </div>
+
+            <button type="submit" class="auth-btn">登录</button>
+          </form>
+        </div>
+
+        <div class="login-register-form register" :class="{ 'form-hidden': !showRegister }">
+          <div class="title-wrapper">
+            <div class="title">用户注册</div>
+            <div class="title-decoration left"></div>
+            <div class="title-decoration right"></div>
+          </div>
+
+          <form @submit.prevent="handleRegister" class="auth-form">
+            <div class="input-group">
+              <i class="user-icon">👤</i>
+              <input type="text" v-model="registerForm.username" placeholder="请输入账号" required />
+            </div>
+            <div class="input-group">
+              <i class="lock-icon">🔒</i>
+              <input type="password" v-model="registerForm.password" placeholder="请输入密码" required />
+            </div>
+            <div class="avatar-upload">
+              <label for="avatar-input" class="avatar-label">
+                <div v-if="!avatarPreview" class="avatar-placeholder">
+                  <i class="upload-icon">📤</i>
+                </div>
+                <img v-else :src="avatarPreview" alt="avatar" class="avatar-preview" />
+                <span>上传头像</span>
+              </label>
+              <input
+                type="file"
+                id="avatar-input"
+                @change="handleAvatarUpload"
+                accept="image/*"
+                class="avatar-input"
+              />
+            </div>
+            <button type="submit" class="auth-btn">注册</button>
+          </form>
+        </div>
+      </div>
+      <div class="switch-form">
+        <a href="#" @click.prevent="toggleForm">{{ showRegister ? '返回登录' : '注册账号' }}</a>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Login",
+  name: "AuthForm",
   data() {
-    var validateCode = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("账号不能为空"));
-      } else {
-        callback();
-      }
-    };
-    var validatePassword = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("密码不能为空"));
-      } else {
-        callback();
-      }
-    };
     return {
-      imageUrl: "",
-      flag: true,
-      formReg: {
-        regAvatar: "",
-        regName: "",
-        regPassword: ""
+      showRegister: false,
+      loginForm: {
+        username: "",
+        password: ""
       },
-      rulesform: {},
-      loading: false,
-      loadingCodeLogins: false,
-      formLogin: {},
-      rulesform: {
-        // 账号登录表单验证
-        name: [{ validator: validateCode, trigger: "blur" }],
-        password: [{ validator: validatePassword, trigger: "blur" }]
-      }
+      registerForm: {
+        username: "",
+        password: "",
+        avatar: null
+      },
+      avatarPreview: "",
+      imageUrl: ""
     };
   },
   methods: {
-    beforeAvatarUpload() {},
-    handleAvatarSuccess(response, file, fileList) {
-      if (response) {
-        this.formReg.regAvatar = URL.createObjectURL(file.raw);
-        this.imageUrl = file.response.imgUrl;
+    handleLogin() {
+      this.loading = true;
+      let body = {};
+      body.username = this.loginForm.username;
+      body.password = this.loginForm.password;
+      this.$AXIOS("/api/login", "post", body).then(res => {
+        this.loading = false;
+        if (res.status === 0) {
+          this.$notify({
+            title: "成功",
+            message: `${res.message}`,
+            type: "success"
+          });
+          this.$store.commit("setUserInfo", res);
+          this.$router.push("/index");
+        } else {
+          this.$message.error(`${res.message}`);
+        }
+      });
+      // Implement login logic here
+    },
+    async handleRegister() {
+      try {
+        // 添加密码长度验证
+        if (
+          this.registerForm.password.length < 6 ||
+          this.registerForm.password.length > 12
+        ) {
+          this.$message.warning("密码长度应为6-12个字符");
+          return;
+        }
+        this.loading = true;
+        // 先上传图片
+        if (this.registerForm.avatar) {
+          const formData = new FormData();
+          formData.append("file", this.registerForm.avatar);
+
+          const uploadRes = await this.$AXIOS(
+            "/api/uploadPicture",
+            "post",
+            formData
+          );
+          if (!uploadRes.imgUrl) {
+            this.$message.error("图片上传失败");
+            this.loading = false;
+            return;
+          }
+          this.imageUrl = uploadRes.imgUrl; // 保存返回的图片URL
+        } else {
+          this.$message.warning("请先上传头像");
+          return;
+        }
+        // 构建注册请求数据
+        const registerData = {
+          username: this.registerForm.username,
+          password: this.registerForm.password,
+          avatar: this.imageUrl // 使用上传后的图片URL
+        };
+        // 调用注册接口
+        const registerRes = await this.$AXIOS(
+          "/api/reguser",
+          "post",
+          registerData
+        );
+        if (registerRes.status === 0) {
+          this.$message.success("注册成功");
+          setTimeout(this.toggleForm, 1500);
+          // 切换到登录tab
+        } else {
+          this.$message.error(registerRes.message || "注册失败");
+        }
+      } catch (error) {
+        console.error("注册错误:", error);
+        this.$message.error("注册失败");
+      } finally {
+        this.loading = false;
       }
     },
-    regUser() {
-      this.flag = !this.flag;
+    toggleForm() {
+      this.showRegister = !this.showRegister;
     },
-    onSubmit() {
-      this.flag ? this.onSubmit1() : this.onSubmit2();
-    },
-    onSubmit1() {
-      let rulesform = "form";
-      this.$refs[rulesform].validate(valid => {
-        if (valid) {
-          this.loading = true;
-          let body = {};
-          body.username = this.formLogin.name;
-          body.password = this.formLogin.password;
-          this.$AXIOS("/api/login", "post", body).then(res => {
-            this.loading = false;
-            if (res.status === 0) {
-              this.$notify({
-                title: "成功",
-                message: `${res.message}`,
-                type: "success"
-              });
-              this.$store.commit("setUserInfo", res);
-              this.$router.push("/index");
-            } else {
-              this.$message.error(`${res.message}`);
-            }
-          });
-        }
-      });
-    },
-    onSubmit2() {
-      let rulesform = "form";
-      this.$refs[rulesform].validate(valid => {
-        if (valid) {
-          this.loading = true;
-          let body = {};
-          body.username = this.formReg.regName;
-          body.password = this.formReg.regPassword;
-          body.avatar = this.imageUrl;
-          this.$AXIOS("api/reguser", "post", body).then(res => {
-            this.loading = false;
-            if (res.status === 0) {
-              this.$notify({
-                title: "成功",
-                message: "注册成功!",
-                type: "success"
-              });
-              this.formReg = {
-                regAvatar: "",
-                regName: "",
-                regPassword: ""
-              };
-              setTimeout(() => {
-                this.flag = !this.flag;
-              }, 2000);
-            } else {
-              this.$message.error(`${res.message}`);
-            }
-          });
-        }
-      });
+    handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      this.registerForm.avatar = file;
+      this.avatarPreview = URL.createObjectURL(file);
     }
-  },
-  mounted() {
-    console.log(this.$socket, "$socket");
   }
 };
 </script>
-<style lang="stylus" scoped >
-.login
-  width 100vw
-  height 100vh
-  background rgb(1, 37, 51) url('../assets/bgp.jpg') no-repeat center / 1912px
-  position relative
-  overflow hidden
-  .box
-    position absolute
-    border 1px solid #a0b1c4
-    left 50%
-    width 450px
-    background-color rgba(0, 0, 0, 0.2)
-    top 50%
-    transform translate(-50%, -50%)
-    border-radius 5px
-    box-shadow 0px 0px 3px #ccc
-    .form-header
-      margin-top 15px
-      font-size 25px
-      color #fff
-      margin-bottom 30px
-      font-family 'AlimamaDaoLiTi'
-      background url('~@/assets/btn.png') center / cover
-    /deep/.el-form-item__label
-      color #fff
-    .regUser
-      color #fff
-      font-size 12px
-      cursor pointer
-    .regForm
-      box-sizing border-box
-      border-radius 5px
-      // box-shadow: 0px 0px 5px #ccc;
-      background-color #ffffff
-      width 400px
-      height 500px
-      padding-top 20px
-    .formLine
-      margin 30px 30px
-      padding-right 20px
-    .login
-      margin-top 15px
-      color #000
-      font-size 12px
-      cursor pointer
-  .el-footer
-    position fixed
-    bottom 0
-    width 100%
-    text-align center
-    font-size 12px
-    color #fff
-</style>
-<style>
-.avatar-uploader {
-  text-align: left;
-}
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  cursor: pointer;
+
+<style scoped>
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 20px;
   position: relative;
   overflow: hidden;
-  background-color: #fff;
-  height: 100px;
-  width: 100px;
-  border-radius: 5%;
 }
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  border-radius: 50%;
-  text-align: center;
-}
-.avatar-uploader-icon::before {
-  content: "\E6D9";
+
+.auth-container::before {
+  content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  pointer-events: none;
 }
-.avatar {
+
+.auth-box {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.forms-container {
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+}
+
+.login-register-form {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.login {
+  transform: translateX(0);
+}
+
+.register {
+  transform: translateX(100%);
+}
+
+.show-register .login {
+  transform: translateX(-100%);
+}
+
+.show-register .register {
+  transform: translateX(0);
+}
+
+.form-hidden {
+  pointer-events: none;
+}
+
+.title-wrapper {
+  position: relative;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 24px;
+  color: white;
+  padding: 10px 30px;
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  display: inline-block;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.title-decoration {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: #3a7bd5;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.title-decoration.left {
+  left: 20px;
+}
+
+.title-decoration.right {
+  right: 20px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #00d2ff;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.user-icon,
+.lock-icon {
+  position: absolute;
+  left: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: normal;
+}
+
+.auth-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3);
+}
+
+.auth-btn:active {
+  transform: translateY(0);
+}
+
+.switch-form {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.switch-form a {
+  color: #00d2ff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.switch-form a:hover {
+  color: #3a7bd5;
+}
+
+.avatar-upload {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.avatar-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.avatar-preview {
   width: 100px;
   height: 100px;
-  /* border-radius: 50%; */
-  display: block;
+  border-radius: 50%;
   object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.avatar-label:hover .avatar-preview {
+  border-color: #00d2ff;
+}
+
+.avatar-label span {
+  color: white;
+  font-size: 14px;
+}
+
+.avatar-input {
+  display: none;
+}
+
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 10px;
+}
+
+.upload-icon {
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.7);
+  font-style: normal;
+}
+
+@media (max-width: 768px) {
+  .auth-box {
+    max-width: 380px;
+    padding: 25px;
+    margin: 20px;
+  }
+
+  .forms-container {
+    height: 420px;
+  }
+
+  .title {
+    font-size: 20px;
+    padding: 8px 20px;
+  }
+
+  .input-group input {
+    padding: 12px 35px;
+    font-size: 15px;
+  }
+
+  .auth-btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .avatar-preview,
+  .avatar-placeholder {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-box {
+    max-width: 320px;
+    padding: 20px 15px;
+    margin: 15px;
+  }
+
+  .forms-container {
+    height: 400px;
+  }
+
+  .title {
+    font-size: 18px;
+    padding: 6px 18px;
+  }
+
+  .input-group input {
+    padding: 10px 32px;
+    font-size: 14px;
+  }
+
+  .avatar-preview,
+  .avatar-placeholder {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .auth-box {
+    max-width: 420px;
+    padding: 30px;
+    margin: 25px;
+  }
+
+  .forms-container {
+    height: 440px;
+  }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .auth-box {
+    max-width: 480px;
+    margin: 15px;
+  }
+
+  .forms-container {
+    height: 380px;
+  }
+
+  .title {
+    font-size: 18px;
+    padding: 6px 18px;
+  }
+
+  .input-group {
+    margin-bottom: 12px;
+  }
+
+  .avatar-upload {
+    margin-bottom: 8px;
+  }
+
+  .avatar-preview,
+  .avatar-placeholder {
+    width: 60px;
+    height: 60px;
+  }
 }
 </style>
-

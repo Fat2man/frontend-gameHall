@@ -2,7 +2,7 @@
   <div class="pokerHall">
     <audio ref="audio" src="~@/assets/music/pokerBgm.ogg" autoplay loop></audio>
     <div class="pokerHall-header">
-      <Header></Header>
+      <Header v-if="!isMobile"></Header>
       <div class="title">
         <h3 class="h22">多人斗地主大厅</h3>
         <p class="tips">组队建房开始游戏吧</p>
@@ -26,7 +26,7 @@
             <span>
               <img :src="item.user_pic" alt="人物头像" class="avatar" />
             </span>
-            <!-- <span>{{item.userName}}</span> -->
+            <span>{{item.userName}}</span>
           </li>
         </div>
       </div>
@@ -74,6 +74,7 @@ export default {
       user: {}, //用户信息
       socket: "",
       dialogCreateRoom: false, //创建房间dialog
+      isMobile: false,
       createForm: {
         roomName: "",
         roomPwd: ""
@@ -146,6 +147,7 @@ export default {
     });
     this.user = JSON.parse(sessionStorage.getItem("userInfo"));
     this.$refs.audio.volume = 0.1;
+    this.isMobile = window.innerWidth <= 768;
   }
 };
 </script>
@@ -285,59 +287,61 @@ export default {
       height 100%
       width 75%
       display flex
-      align-items flex-end
-      padding 8% 5%
+      flex-wrap wrap
+      justify-content center
+      align-items center
+      padding 4% 2%
       box-sizing border-box
-      // background url('~@/assets/desk.png') center/contain no-repeat
       .roomOne
-        width 120px
-        height 120px
-        // background-color rgba(0,0,0,.3)
-        // box-shadow 0px 0px 5px 0px gold
-        border-radius 50%
-        margin 45px
+        width 180px
+        height 180px
+        margin 25px
         position relative
-        .desk
-          position absolute
-          left 50%
-          top 50%
-          transform translate(-53%, -50%)
-        .roomTitle
-          position absolute
-          left 50%
-          top 53%
-          color #fff
-          font-size 12px
-          text-shadow 0px 0px 5px #ccc
-          font-weight 600
-          color purple
-          white-space nowrap
-          transform translate(-50%, -50%)
+        transition all 0.3s ease
+        cursor pointer
+        &:hover
+          transform scale(1.05)
         li
           list-style none
-          color #000
-          display flex
-          flex-direction column
-          text-align center
-          &:nth-of-type(1)
-            position absolute
-            top 85px
-            left 40px
-          &:nth-of-type(2)
-            position absolute
-            top 40px
-            left -26px
-          &:nth-of-type(3)
-            position absolute
-            top 40px
-            left 97px
-          span
-            font-size 12px
+        .desk
+          width 100%
+          height 100%
+          object-fit cover
+          border-radius 15px
+          box-shadow 0 5px 15px rgba(0, 0, 0, 0.3)
+        .roomTitle
+          position absolute
+          left 54%
+          top 50%
+          color #fff
+          font-size 14px
+          font-weight bold
+          text-shadow 2px 2px 4px rgba(0, 0, 0, 0.5)
+          background rgba(0, 0, 0, 0.6)
+          padding 5px 15px
+          border-radius 20px
+          transform translate(-50%, -50%)
+        li
+          position absolute
+          transition all 0.3s ease
           .avatar
-            width 45px
-            height 45px
-            border-radius 999px
-            object-fit cover
+            width 50px
+            height 50px
+            border-radius 50%
+            border 3px solid #fff
+            box-shadow 0 2px 8px rgba(0, 0, 0, 0.2)
+          &:nth-of-type(1)
+            bottom -15px
+            left 55%
+            transform translateX(-50%)
+          &:nth-of-type(2)
+            top 50%
+            left -15px
+            transform translateY(-50%)
+          &:nth-of-type(3)
+            top 50%
+            right -15px
+            transform translateY(-50%)
 >>>.el-dialog
   background url('~@/assets/dialogBg.png') center / cover
   .el-dialog__header
