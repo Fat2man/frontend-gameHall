@@ -28,10 +28,10 @@
 
 **移动端适配效果：**
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg" alt="Image 1" width="245">
-  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg" alt="Image 2" width="245">
-    <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg" alt="Image 2" width="245">
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg" alt="Image 1">
+  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg" alt="Image 2">
+    <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg" alt="Image 2" >
 </div>
 
 ##### <u>*目前移动端适配了登录、注册、大厅和聊天室，斗地主还没有适配*</u>
