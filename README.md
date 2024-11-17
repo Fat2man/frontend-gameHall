@@ -36,8 +36,6 @@
 
 ##### <u>*目前移动端适配了登录、注册、大厅和聊天室，斗地主还没有适配*</u>
 
-前端GitHub项目地址：https://github.com/Fat2man/game-hall
-
 后端GitHub地址传送门：https://github.com/Fat2man/backend-gameHall
 
 需要改进的有很多，请大家可以多提提意见。后续我会不断改进，如果觉得还可以，请star，你们的star是我前进的动力。   
