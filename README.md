@@ -10,17 +10,13 @@
 
 #### 效果图
 
+**PC端效果：**
+
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816552922.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816552922.jpg)
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731815429348.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731815429348.jpg)
 
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg)
-
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731815950460.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731815950460.jpg)
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg)
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg)
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554720382.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554720382.png)
 
@@ -29,6 +25,16 @@
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554919892.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729554919892.png)
 
 ![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729555169095.png](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1729555169095.png)
+
+**移动端适配效果：**
+
+![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg)
+
+![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg)
+
+![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg)
+
+<u>*目前移动端适配了登录、注册、大厅和聊天室，斗地主还没有适配*</u>
 
 前端GitHub项目地址：https://github.com/Fat2man/game-hall
 
