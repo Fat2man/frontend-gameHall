@@ -29,16 +29,10 @@
 **移动端适配效果：**
 
 <div style="display: flex; justify-content: space-around;">
-  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg" alt="Image 1" width="300">
-  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg" alt="Image 2" width="300">
-    <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg" alt="Image 2" width="300">
+  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg" alt="Image 1" width="245">
+  <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg" alt="Image 2" width="245">
+    <img src="https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg" alt="Image 2" width="245">
 </div>
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816139070.jpg)
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/90b6713d0550bed633dd7046a45ba64.jpg)
-
-![https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg](https://github.com/Fat2man/frontend-gameHall/blob/main/.image/1731816146515.jpg)
 
 ##### <u>*目前移动端适配了登录、注册、大厅和聊天室，斗地主还没有适配*</u>
 
