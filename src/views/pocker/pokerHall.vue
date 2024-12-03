@@ -140,7 +140,6 @@ export default {
     });
     this.socket.on("systemErr", message => {
       this.$message.warning(message);
-      console.log(message, "message");
     });
     this.socket.on("enterRoom", () => {
       this.$router.push("/pokerRoom");
@@ -320,11 +319,12 @@ export default {
           background rgba(0, 0, 0, 0.6)
           padding 5px 15px
           border-radius 20px
-          transform translate(-50%, -50%)
+          transform translate(-50%, -50%) 5
         li
           position absolute
           transition all 0.3s ease
           .avatar
+            display block
             width 50px
             height 50px
             border-radius 50%

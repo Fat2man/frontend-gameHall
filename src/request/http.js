@@ -2,14 +2,12 @@ import axios from 'axios'
 import router from '../router'
 import ElementUI from 'element-ui';
 const baseURL = 'http://8.140.238.198:8000/'
+// const baseURL = 'http://127.0.0.1:8000/'
 const instance = axios.create({
   baseURL: baseURL,
   timeout: 12000,
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 });
-// axios.defaults.baseURL = baseURL
-// axios.defaults.timeout = 30000
-// 添加请求拦截器
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   let token = JSON.parse(sessionStorage.getItem('mytoken'))  // 获取本地存储的token值
@@ -37,7 +35,6 @@ instance.interceptors.response.use(function (response) {
   // 对响应错误做点什么
   return Promise.reject(error);
 });
-
 // async function refreshToken() {
 // 	return new Promise((resolve,reject) => {
 // 		let param = {}

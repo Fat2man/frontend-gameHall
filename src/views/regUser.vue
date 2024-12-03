@@ -80,6 +80,9 @@ export default {
             } else {
               this.$message.error(`${res.message}`);
             }
+          }).catch(err =>{
+            console.log(err,'err');
+            
           });
         }
       });

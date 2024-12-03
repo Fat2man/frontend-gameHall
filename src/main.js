@@ -35,6 +35,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.prototype.$AXIOS = AXIOS
 Vue.prototype.$basrUrl = 'http://8.140.238.198:8000/'
+// Vue.prototype.$basrUrl = 'http://127.0.0.1:8000/'
 new Vue({
   router,
   store,
