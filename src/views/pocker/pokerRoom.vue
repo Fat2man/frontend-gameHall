@@ -216,8 +216,6 @@ export default {
       lordSet: {}, //底牌
       floatingPoker: [], //点击浮起的牌
       countdown: [], //倒计时数组  顺序[左边，我，右边]
-      handPoker: {}, //手牌
-      outPoker: {}, //打出去的牌
       hasDizhu: false, //是否有了地主
       start: false, //游戏是否开始
       flag: false, //区分行为是手动操作还是倒计时结束   true 手动点击操作
@@ -235,11 +233,14 @@ export default {
         //玩家没操作，倒计时结束时自动过
         this.passPoker();
       }
+    },
+    "roomUser[1].poker"(newval) {
+      if (newval.length === 0) this.gameOver();
     }
   },
   computed: {
     resultTitle() {
-      return this.winner === this.userInfo.userName ? "成功" : "失败";
+      return this.winner === this.userInfo.userName ? "胜利" : "失败";
     },
     totalCoins() {
       if (this.userInfo.landlord) {
@@ -280,12 +281,6 @@ export default {
     playPoker() {
       if (this.floatingPoker.length) {
         this.socket.emit("playPoker", this.floatingPoker);
-      } else {
-        this.$message({
-          showClose: false,
-          message: "请先选择牌组",
-          type: "warning"
-        });
       }
     },
     passPoker() {
@@ -338,14 +333,8 @@ export default {
       this.socket.emit("leaveRoom");
     },
     gameOver() {
-      let result = this.userInfo.landlord ? 1000 : 500;
       //游戏结束，通知服务端
-      this.socket.emit("overToServer", {
-        winner: this.userInfo.userName,
-        score: result,
-        losers: [this.roomUser[0].userName, this.roomUser[2].userName],
-        lord: this.roomUser.find(item => item.landlord).userName
-      });
+      this.socket.emit("overToServer");
     },
     handleExitRoom() {
       // 退出房间
