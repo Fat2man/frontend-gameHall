@@ -77,12 +77,9 @@ export default {
               setTimeout(() => {
                 this.$router.push("/");
               }, 2000);
-            } else {
-              this.$message.error(`${res.message}`);
             }
           }).catch(err =>{
             console.log(err,'err');
-            
           });
         }
       });

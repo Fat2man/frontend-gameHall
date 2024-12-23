@@ -7,7 +7,11 @@ module.exports = {
   publicPath: './',
   lintOnSave: false,
   devServer: {
-    open: true
+    open: true,
+    port: 8080,
+    disableHostCheck: true,
+    host: '0.0.0.0',
+    hot: true,
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -19,5 +23,13 @@ module.exports = {
       }
     }
   },
-
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          javascriptEnabled: true
+        }
+      }
+    }
+  }
 }   

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="replay">重放</button>
+  <div id="role" style="width:100px;height: 100px;background-color: blue;position: relative;"></div>
+</body>
+<script>
+  let role = document.getElementById('role');
+  let move = {
+    dom: role,
+    leftt: 0,
+    top: 0,
+    up() {
+      console.log("向上");
+      this.top -= 10;
+      this.updatePosition();
+    },
+    down() {
+      console.log("向下");
+      this.top += 10;
+      this.updatePosition();
+    },
+    left() {
+      console.log("向左");
+      this.leftt -= 10;
+      this.updatePosition();
+    },
+    right() {
+      console.log("向右");
+      this.leftt += 10;
+      this.updatePosition();
+    },
+    updatePosition() {
+      console.log(`Updating position: left = ${this.leftt}, top = ${this.top}`);
+      this.dom.style.left = this.leftt + 'px';
+      this.dom.style.top = this.top + 'px';
+    },
+    reset() {
+      console.log("重置位置");
+      this.leftt = 0;
+      this.top = 0;
+      this.updatePosition();
+    }
+  };
+
+  // 定义命令映射
+  commands = {
+    38: "up", // Up Arrow
+    40: "down", // Down Arrow
+    37: "left", // Left Arrow
+    39: "right" // Right Arrow
+  };
+
+  commandStack = []; // 保存命令的堆栈
+
+  let setCommand = function (receiver, state) {
+    return function () {
+      receiver[state]();
+    };
+  };
+
+  document.addEventListener('keydown', (e) => {
+    let code = e.keyCode;
+    if (!commands[code]) {
+      return;
+    }
+    let command = setCommand(move, commands[code]);
+    if (command) {
+      command();
+      commandStack.push(command);
+    }
+  });
+
+  document.getElementById('replay').onclick = function () {
+    move.reset(); // 重置到初始位置
+    commandStack.forEach((cb, index) => {
+      setTimeout(() => {
+        console.log(`Executing command ${index + 1}`);
+        cb();
+      }, index * 30); // 100ms 间隔
+    });
+  };
+</script>
+
+</html>

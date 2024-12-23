@@ -86,12 +86,12 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
+    async handleLogin() {
       this.loading = true;
       let body = {};
       body.username = this.loginForm.username;
       body.password = this.loginForm.password;
-      this.$AXIOS("/api/login", "post", body).then(res => {
+      this.$AXIOS("api/login", "post", body).then(res => {
         this.loading = false;
         if (res.status === 0) {
           this.$notify({
@@ -101,11 +101,8 @@ export default {
           });
           this.$store.commit("setUserInfo", res);
           this.$router.push("/index");
-        } else {
-          this.$message.error(`${res.message}`);
         }
       });
-      // Implement login logic here
     },
     async handleRegister() {
       try {
@@ -172,7 +169,7 @@ export default {
       this.registerForm.avatar = file;
       this.avatarPreview = URL.createObjectURL(file);
     }
-  }
+  },
 };
 </script>
 

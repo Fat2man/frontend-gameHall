@@ -7,11 +7,11 @@
       <div class="operation">
         <i
           class="iconfont icon-fanhui"
-          style="fontSize:30px;color:rgb(237, 219, 147);"
+          style="font-size:30px;color:rgb(237, 219, 147);"
           @click="goBack"
           v-click-sound
         ></i>
-        <i class="iconfont icon-talk" style="fontSize:35px;color:rgb(237, 219, 147);" v-click-sound></i>
+        <i class="iconfont icon-talk" style="font-size:35px;color:rgb(237, 219, 147);" v-click-sound></i>
       </div>
     </div>
     <div class="pokerRoom-box">
@@ -68,8 +68,8 @@
                 <img src="~@/assets/poker/rear.png" />
               </li>
             </template>
-            <li v-show="roomUser[0].countdown" style="position:absolute;left:140%;top:50%">
-              <img src="~@/assets/alarm-clock.png" />
+            <li v-show="roomUser[0].countdown" style="position:absolute;left:140%;top:40%">
+              <img src="~@/assets/alarm-clock.png" style="width:50px"/>
               <p class="countDown">{{roomUser[0].countdown}}</p>
             </li>
             <template v-if="!roomUser[0].countdown">
@@ -82,16 +82,17 @@
           </ul>
           <ul class="me">
             <li
-              v-for="item in roomUser[1].poker"
+              v-for="(item, index) in roomUser[1].poker"
               :key="item"
               @click="clickPoker(item)"
               :class="{active:floatingPoker.includes(item)}"
+              :style="{zIndex: 10+ index}"
             >
               <img :src="require(`@/assets/poker/${item}.png`)" />
             </li>
             <li
               v-show="roomUser[1].countdown"
-              style="position:absolute;bottom:110%;display:flex;justify-content:center;width:100%"
+              :style="{position:'absolute',bottom:isMobile?'100%':'110%',display:'flex',justifyContent:'center',left:'32%',alignItems:'center',lineHeight:'30px'}"
             >
               <img
                 v-show="hasDizhu"
@@ -115,7 +116,7 @@
               />
             </li>
             <template v-if="!roomUser[1].countdown">
-              <ul class="meLastPoker">
+              <ul class="meLastPoker">    
                 <li v-for="item in roomUser[1].lastPoker">
                   <img :src="require(`@/assets/poker/${item}.png`)" />
                 </li>
@@ -134,8 +135,8 @@
                 <img src="~@/assets/poker/rear.png" />
               </li>
             </template>
-            <li v-show="roomUser[2].countdown" style="position:absolute;bottom:50%;right:120%">
-              <img src="~@/assets/alarm-clock.png" />
+            <li v-show="roomUser[2].countdown" style="position:absolute;bottom:60%;right:120%">
+              <img src="~@/assets/alarm-clock.png" style="width:50px"/>
               <p class="countDown">{{roomUser[2].countdown}}</p>
             </li>
             <template v-if="!roomUser[2].countdown">
@@ -189,6 +190,10 @@
         :nickname="userInfo.userName"
       />
     </el-dialog>
+    <!-- 添加移动端菜单按钮 -->
+    <div class="mobile-menu" v-show="isMobile">
+      <i class="iconfont icon-menu" @click="toggleMenu"></i>
+    </div>
   </div>
 </template>
 <script>
@@ -222,7 +227,9 @@ export default {
       audio: null, //播放音频类型
       gameEnding: false, //游戏是否结束
       winStreakDialog: false, //连胜弹框
-      winner: "" //赢家
+      winner: "", //赢家
+      isMobile: false,
+      showMobileMenu: false
     };
   },
   watch: {
@@ -289,7 +296,7 @@ export default {
       this.socket.emit("passPoker");
     },
     playerSort(data) {
-      //玩家排序  ‘我’始终在中间
+      //玩家排序  '我'始终在中间
       let newSet = new Set();
       let keys = Object.keys(data).filter(key => key !== this.socket.id);
       [keys[0], this.socket.id, keys[1]].forEach(key => newSet.add(data[key]));
@@ -312,16 +319,16 @@ export default {
         this.floatingPoker.splice(index, 1);
       } else {
         this.floatingPoker.push(item);
-      }
+      } 
     },
     cancelReady() {
       this.socket.emit("goReady", false);
     },
-    goReady() {
+    goReady() {       
       this.socket.emit("goReady", true);
     },
     startGame() {
-      if (Object.keys(this.roomUser).length !== 3) return;
+      if (Object.keys(this.roomUser).length !== 3) return;    
       for (let i in this.roomUser) {
         if (!this.roomUser[i]?.Homeowner && !this.roomUser[i]?.ready)
           return this.$message.warning("还有人未准备");
@@ -348,6 +355,36 @@ export default {
       this.lordSet = [];
       this.hasDizhu = false; //恢复为没有地主产生
       this.socket.emit("continueGame"); //通知服务端继续游戏，重置相关数据
+    },
+    checkDevice() {
+      this.isMobile = window.innerWidth <= 768;
+      if(this.isMobile) {
+        // 移动端初始化逻辑
+        this.initMobileView();
+      }
+    },
+    initMobileView() {
+      // 移动端特定初始化
+    },
+    toggleMenu() {
+      this.showMobileMenu = !this.showMobileMenu;
+    },
+    // 计算卡牌位置
+    calculateCardPosition(index, total) {
+      const maxAngle = 40; // 最大展开角度
+      const angle = (index - (total - 1) / 2) * (maxAngle / total);
+      return angle;
+    },
+    
+    // 更新卡牌布局
+    updateCardsLayout() {
+      const cards = this.roomUser[1].poker;
+      const total = cards.length;
+      
+      cards.forEach((card, index) => {
+        const angle = this.calculateCardPosition(index, total);
+        // 可以通过 DOM 操作或数据绑定来更新卡牌位置
+      });
     }
   },
   created() {
@@ -397,226 +434,469 @@ export default {
       sessionStorage.setItem("userInfo", JSON.parse(userInfo));
     });
   },
+  mounted() {
+    // 检测是否为移动设备
+    this.checkDevice();
+    window.addEventListener('resize', this.checkDevice);
+  },
   beforeDestroy() {
     this.socket.emit("leaveRoom");
+    window.removeEventListener('resize', this.checkDevice);
   }
 };
 </script>
 
-<style lang="stylus" scoped>
-.pokerRoom
-  height 100vh
-  width 100%
-  background url('~@/assets/desk.jpg') left / 100% 100% no-repeat
-  min-height 450px
-  position relative
-  .pokerRoom-header
-    background-color rgba(0, 0, 0, 0.5)
-    box-shadow 0 1px 3px 0 rgba(0, 34, 77, 0.05)
-    height 3.75rem
-    display flex
-    justify-content center
-    padding 0 20px
-    align-items center
-    .operation
-      width 100px
-      display flex
-      justify-content space-between
-  .pokerRoom-box
-    height calc(100% - 3.75rem)
-    position relative
-    .winActive2
-      position absolute
-      animation WinMove2 2s forwards
-    @keyframes WinMove2
-      from
-        bottom 10%
-        left 2%
-      to
-        bottom 81%
-        left 47%
-        display flex
-    .avatarImg
-      width 60px
-      height 60px
-      border 3px solid rgb(254, 242, 118)
-      object-fit cover
-    p
-      color #ffffff
-      font-size 20px
-      font-weight 700
-      letter-spacing 2px
-    .me
-      position absolute
-      left 2%
-      bottom 10%
-      z-index 99999
-      .img1
-        object-fit scale-down
-        &:hover
-          transform scale(1.05)
-      .button1
-        width 110px
-        height 40px
-        line-height 40px
-        background-color rgb(53, 160, 218)
-        color #fff
-        border none
-        font-weight 700
-        border-radius 999px
-        font-size 16px
-        cursor url('~@/assets/sword.png'), auto !important
-        &:hover
-          transform scale(1.05)
-      .button2
-        width 110px
-        height 40px
-        line-height 40px
-        color #fff
-        background-color rgb(247, 156, 70)
-        border none
-        font-weight 700
-        border-radius 999px
-        font-size 16px
-        cursor url('~@/assets/sword.png'), auto !important
-        &:hover
-          transform scale(1.05)
-    .others
-      position absolute
-      font-size 16px
-      color gold
-      font-weight 500
-      bottom 75%
-      z-index 99999
-      &:nth-child(1)
-        left 2%
-      &:nth-child(3)
-        right 2%
-    .Jxd
-      height 38px
-      line-height 38px
-      display flex
-      color rgb(251, 238, 191)
-      background-color rgba(0, 0, 0, 0.1)
-      margin-bottom 5px
-      z-index 999
-    .gameButton
-      position absolute
-      left 50%
-      top 50%
-      transform translate(-50%, -50%)
-      list-style-type none
-      li
-        &:nth-child(3)
-          width 250px
-          display flex
-          align-items center
-          justify-content space-between
-      .el-button--warning
-        font-size 20px
-        border-radius 999px
-        letter-spacing 2px
-        box-shadow 0px 0px 5px #ccc
-      .el-button--success
-        font-size 20px
-        border-radius 999px
-        letter-spacing 2px
-        box-shadow 0px 0px 5px #ccc
-    .poker
-      width 100%
-      .rear
-        position absolute
-        left 50%
-        top 50%
-        transform translate(-50%, -50%)
-      .playerPoker
-        position relative
-        width 100%
-        .countDown
-          position absolute
-          color #000
-          left 50%
-          top 50%
-          transform translate(-50%, -50%)
-        .left
-          position fixed
-          left 10%
-          top 30%
-          li
-            margin-top -78px
-          .leftLastPoker
-            position absolute
-            left 130px
-            top 40%
-            display flex
-            li
-              margin-left -38px
-        .me
-          position fixed
-          left 50%
-          bottom 10%
-          display flex
-          transform translateX(-50%)
-          li
-            margin-left -40px
-            z-index 999
-          .active
-            transform translateY(-10px)
-          .alarm
-            animation alarmMove 1s
-          @keyframes alarmMove
-            0%
-              transform rotate(0deg)
-            25%
-              transform rotate(-45deg)
-            50%
-              transform rotate(0deg)
-            75%
-              transform rotate(45deg)
-            100%
-              transform rotate(0deg)
-          .meLastPoker
-            position absolute
-            top -110px
-            display flex
-        .right
-          position fixed
-          right 10%
-          top 30%
-          li
-            margin-top -78px
-          .rightLastPoker
-            position absolute
-            right 80px
-            top 40%
-            display flex
-            li
-              margin-left -38px
-        .lord
-          position fixed
-          top 8%
-          left 50%
-          display flex
-          transform translateX(-50%)
-          padding 10px
-          background-color rgba(0, 0, 0, 0.5)
-        .middle
-          position fixed
-          top 50%
-          left 50%
-          display flex
-          transform translate(-50%, -50%)
-        li
-          list-style none
-  /deep/.gameSettle
-    z-index 9999
-  /deep/.victoryBanner
-    z-index 999999
-  /deep/.el-dialog__body
-    padding 0
-  /deep/.el-dialog
-    border-radius 10px
-    width 640px
-  /deep/.el-dialog__header
-    padding 0
+<style lang="less" scoped>
+.pokerRoom {
+  height: 100vh;
+  width: 100%;
+  background: url('~@/assets/desk.jpg') center/cover no-repeat;
+  min-height: 450px;
+  position: relative;
+
+  .pokerRoom-header {
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 3px 0 rgba(0, 34, 77, 0.05);
+    height: 3.75rem;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    align-items: center;
+
+    .operation {
+      width: 120px;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .pokerRoom-box {
+    height: calc(100% - 3.75rem);
+    position: relative;
+
+    .winActive2 {
+      position: absolute;
+      animation: WinMove2 2s forwards;
+    }
+
+    @keyframes WinMove2 {
+      from {
+        bottom: 10%;
+        left: 2%;
+      }
+      to {
+        bottom: 81%;
+        left: 47%;
+        display: flex;
+      }
+    }
+
+    .avatarImg {
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgb(254, 242, 118);
+      object-fit: cover;
+    }
+
+    p {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .me {
+      position: absolute;
+      left: 2%;
+      bottom: 10%;
+      z-index: 99999;
+
+      .img1 {
+        object-fit: scale-down;
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      .button1, .button2 {
+        width: 110px;
+        height: 40px;
+        line-height: 40px;
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        border-radius: 999px;
+        font-size: 16px;
+        cursor: url('~@/assets/sword.png'), auto !important;
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      .button1 {
+        background-color: rgb(53, 160, 218);
+      }
+
+      .button2 {
+        background-color: rgb(247, 156, 70);
+      }
+    }
+
+    .others {
+      position: absolute;
+      font-size: 16px;
+      color: gold;
+      font-weight: 500;
+      top: 0;
+      z-index: 99999;
+
+      &:nth-child(1) {
+        left: 2%;
+      }
+      &:nth-child(3) {
+        right: 2%;
+      }
+    }
+
+    .Jxd {
+      height: 38px;
+      line-height: 38px;
+      display: flex;
+      color: rgb(251, 238, 191);
+      background-color: rgba(0, 0, 0, 0.1);
+      margin-bottom: 5px;
+      z-index: 999;
+    }
+
+    .gameButton {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      list-style-type: none;
+
+      li {
+        &:nth-child(3) {
+          width: 250px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      .el-button--warning {
+        font-size: 20px;
+        border-radius: 999px;
+        letter-spacing: 2px;
+        box-shadow: 0px 0px 5px #ccc;
+      }
+
+      .el-button--success {
+        font-size: 20px;
+        border-radius: 999px;
+        letter-spacing: 2px;
+        box-shadow: 0px 0px 5px #ccc;
+      }
+    }
+
+    .poker {
+      width: 100%;
+
+      .rear {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .playerPoker {
+        position: relative;
+        width: 100%;
+        .countDown {
+          position: absolute;
+          color: #000;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        .left {
+          position: fixed;
+          left: 10%;
+          top: 30%;
+
+          li {
+            margin-top: -78px;
+          }
+
+          .leftLastPoker {
+            position: absolute;
+            left: 130px;
+            top: 40%;
+            display: flex;
+
+            li {
+              margin-left: -38px;
+            }
+          }
+        }
+
+        .me {
+          position: fixed;
+          left: 50%;
+          bottom: 10%;
+          display: flex;
+          transform: translateX(-50%);
+          width: 70%;
+          justify-content: center;
+          flex-wrap: nowrap;
+          
+          li {
+            margin-left: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
+            margin: 0 -20px;
+            list-style-type: none;
+            &.active {
+              transform: translateY(-20px);
+            }
+
+            img {
+              width: 80px;
+              height: auto;
+              display: block;
+            }
+          }
+        }
+
+        .right {
+          position: fixed;
+          right: 10%;
+          top: 30%;
+
+          li {
+            margin-top: -78px;
+          }
+
+          .rightLastPoker {
+            position: absolute;
+            right: 80px;
+            top: 40%;
+            display: flex;
+
+            li {
+              margin-left: -38px;
+            }
+          }
+        }
+
+        .lord {
+          position: fixed;
+          top: 8%;
+          left: 50%;
+          display: flex;
+          transform: translateX(-50%);
+          padding: 10px;
+          background-color: rgba(0, 0, 0, 0.5);
+
+          li {
+            list-style: none;
+          }
+        }
+
+        .middle {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          display: flex;
+          transform: translate(-50%, -50%);
+        }
+      }
+    }
+  }
+
+  /deep/.gameSettle {
+    z-index: 9999;
+  }
+
+  /deep/.victoryBanner {
+    z-index: 999999;
+  }
+
+  /deep/.el-dialog__body {
+    padding: 0;
+  }
+
+  /deep/.el-dialog {
+    border-radius: 10px;
+    width: 640px;
+  }
+
+  /deep/.el-dialog__header {
+    padding: 0;
+  }
+  li{
+    list-style-type: none!important;
+  }
+  // 移动端特定样式
+  .mobile-menu {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+  }
+
+  .alarm {
+    transform: scale(0.8);
+  }
+
+  .countDown {
+    font-size: 14px;
+  }
+
+  [v-click-sound] {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .active {
+    transition: transform 0.2s ease;
+  }
+
+  @keyframes alarmMove {
+    0%, 100% {
+      transform: rotate(0) scale(0.8);
+    }
+    25% {
+      transform: rotate(-30deg) scale(0.8);
+    }
+    75% {
+      transform: rotate(30deg) scale(0.8);
+    }
+  }
+}
+// 媒体查询
+@media screen and (max-width: 768px) {
+  .pokerRoom {
+    min-height: 100vh !important;
+
+    .pokerRoom-header {
+      height: 2.5rem;
+
+      .operation {
+        width: 105px;
+      }
+    }
+
+    .pokerRoom-box {
+      height: calc(100% - 2.5rem);
+
+      .avatarImg {
+        width: 40px;
+        height: 40px;
+      }
+
+      .me {
+        left: 0;
+        bottom: 1%;
+        img {
+          width: 40px;
+        }
+
+        .button1, .button2 {
+          width: 80px;
+          height: 30px;
+          font-size: 14px;
+        }
+      }
+
+      .others {
+        &:nth-child(1) {
+          left: 5px;
+          bottom: 60%;
+        }
+
+        &:nth-child(3) {
+          right: 5px;
+          bottom: 60%;
+        }
+      }
+
+      .poker {
+        .playerPoker {
+          .left{
+            top:44%;
+            li{
+              margin-top: -90px;
+            }
+          }
+          .me {
+            position: fixed;
+            left: 50%;
+            bottom: 16%;
+            transform: translateX(-50%);
+            width: 90vw;
+            height: 80px;
+            display: flex;
+            align-items: flex-end;
+            li {
+              margin-left: -12px;
+              z-index: 12;
+              img {
+                width: 50px;
+                height: auto;
+                display: block;
+              }
+              &.active {
+                z-index: 13;
+                transform: translateY(-20px);
+              }
+            }
+          }
+          .right{
+            top:44%;
+            li{
+              margin-top: -90px;
+            }
+          }
+          .lord{
+            img{
+              width:50px
+            }
+          }
+        }
+      }
+
+      .gameButton {
+        li {
+          img {
+            width: 120px;
+          }
+        }
+
+        .el-button {
+          font-size: 16px;
+          padding: 8px 15px;
+        }
+      }
+
+      .Jxd {
+        height: 30px;
+        line-height: 30px;
+        margin-bottom: 3px;
+        
+        img {
+          width: 30px;
+          height: 30px;
+        }
+        
+        span {
+          font-size: 14px;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+}
 </style>

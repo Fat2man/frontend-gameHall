@@ -2,6 +2,17 @@
 
 这段时间学习node 和 express，想着技术总得实践，就着手开发一直想做的斗地主了，做之前先实现了个聊天室是当作熟悉一下Websocket，后面一边上班，一边下班后写写，又实现了斗地主功能（包括建房、设房间密码、加入房间、开启游戏、游戏结算、颁发连胜奖章等）。
 
+#### **项目启动**
+
+```
+//clone项目
+1，git clone https://github.com/Fat2man/frontend-gameHall.git
+//切换到项目根目录安装依赖
+2，yarn
+//开启服务
+3，yarn serve
+```
+
 #### 线上预览地址：http://gameHall.jxtech.fun/#/
 
 #### 功能分析于与设计

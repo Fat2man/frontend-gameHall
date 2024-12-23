@@ -69,13 +69,13 @@ export default {
           name: "多人斗地主", 
           icon: "el-icon-star-on",
           description: "经典棋牌游戏，随时开局",
-          players: "1,234"
+          players: ""
         },
         { 
           name: "聊天室", 
           icon: "el-icon-chat-dot-round",
           description: "畅聊交友，结识新伙伴",
-          players: "856"
+          players: ""
         }
       ],
       isMobile: false,
@@ -97,6 +97,15 @@ export default {
       this.windowWidth = window.innerWidth;
       this.isMobile = window.innerWidth <= 768;
     }
+  },
+  created(){
+    this.$AXIOS("users/count", "get", {}).then(({status,data}) => {
+       if(status === 0){
+         const {chatUsers,roomUsers} = data         
+         this.gameArr[1].players = chatUsers
+         this.gameArr[0].players = roomUsers
+       }
+    });
   },
   mounted() {
     this.handleResize();
@@ -122,7 +131,6 @@ export default {
 
 <style lang="stylus" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&display=swap')
-
 .index
   min-height 100vh
   background linear-gradient(135deg, #1a1c2c 0%, #4a1942 50%, #893168 100%)
@@ -134,26 +142,21 @@ export default {
   display flex
   justify-content center
   align-items center
-
 .title-container
   position relative
   display flex
   justify-content center
   align-items center
   width 100%
-
   .logout-btn
     position absolute!important
     right 20px
     color #fff
-    font-size 16px
-    
+    font-size 16px 
     &:hover
-      color #FFD700
-      
+      color #FFD700     
     i
       margin-right 5px
-
 .title
   font-family 'Noto Serif SC', serif
   font-size 36px
@@ -169,46 +172,38 @@ export default {
   @media (max-width: 768px)
     font-size 24px
     padding 5px 15px
-
 .title-decoration
   position absolute
   top 50%
   width 100px
   height 2px
   background linear-gradient(to right, transparent, #FFD700, transparent)
-
   &.left
     left 0
     transform translateY(-50%) translateX(-120%)
   @media (max-width: 768px)
-    width 60px
-    
+    width 60px   
     &.left
-      transform translateY(-50%) translateX(-80%)
-    
+      transform translateY(-50%) translateX(-80%)   
     &.right
       right 0
       transform translateY(-50%) translateX(120%)
       transform translateY(-50%) translateX(80%)
-
 @keyframes titleGlow
   from
     text-shadow 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5)
   to
     text-shadow 0 0 15px rgba(255, 215, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7)
-    
 .main-container
   height calc(100vh - 80px)
   @media (max-width: 768px)
     height auto
     min-height calc(100vh - 80px)
-
 .sidebar
   background rgba(255, 255, 255, 0.05)
   backdrop-filter blur(10px)
   border-right 1px solid rgba(255, 255, 255, 0.1)
   padding 20px
-  
   .dynamic-banner
     height 80px
     margin-bottom 20px
@@ -216,14 +211,12 @@ export default {
     border-radius 10px
     overflow hidden
     position relative
-    
     .banner-content
       position absolute
       top 0
       left 0
       width 100%
       height 100%
-      
       .banner-animation
         position absolute
         top 50%
@@ -233,25 +226,20 @@ export default {
         height 200%
         background radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%, transparent 20%, rgba(255,255,255,0.1) 20.5%, transparent 30%)
         background-size 50px 50px
-        animation rotate 20s linear infinite, pulse 4s ease-in-out infinite alternate
-        
+        animation rotate 20s linear infinite, pulse 4s ease-in-out infinite alternate  
   .welcome-card
     background rgba(255, 255, 255, 0.1)
     border none
     color #fff
-    
     .welcome-header
       background rgba(255, 255, 255, 0.1)
-      padding 15px
-      
+      padding 15px   
       .welcome-title
         font-size 20px
         font-weight bold
-        
     .welcome-content
       padding 20px
       line-height 1.6
-      
 .game-container
   padding 40px
   display flex
@@ -259,7 +247,6 @@ export default {
   justify-content center
   @media (max-width: 768px)
     padding 20px
-
 .game-grid
   display grid
   grid-template-columns repeat(2, 1fr)
@@ -268,11 +255,9 @@ export default {
   max-width 1200px
   @media (max-width: 1024px)
     gap 20px
-    
   @media (max-width: 768px)
     grid-template-columns 1fr
     padding 10px
-
 .game-card
   position relative
   height 300px
@@ -282,17 +267,13 @@ export default {
   background rgba(255, 255, 255, 0.1)
   backdrop-filter blur(5px)
   transition all 0.3s ease
-  
   &:hover
     transform translateY(-10px)
     box-shadow 0 20px 40px rgba(0, 0, 0, 0.3)
-    
     .card-overlay
-      opacity 0.8
-      
+      opacity 0.8  
     .game-title
-      transform translateY(-5px)
-      
+      transform translateY(-5px) 
   &.game-card-landlord
     background linear-gradient(45deg, #ff6b6b, #feca57)
     

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --mode development",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -19,7 +19,6 @@
     "global": "^4.4.0",
     "html2canvas": "^1.4.1",
     "js-web-screen-shot": "^1.9.9-rc.11",
-    "less": "^4.2.0",
     "live2d-widget": "^3.1.4",
     "loader": "^2.1.1",
     "nodejs-websocket": "^1.7.2",
@@ -36,6 +35,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.25.9",
     "@escook/express-joi": "^1.1.1",
     "@hapi/joi": "17.1.0",
     "@vue/cli-plugin-babel": "^3.0.4",
@@ -50,7 +50,11 @@
     "express": "^4.17.1",
     "express-jwt": "5.3.3",
     "jsonwebtoken": "8.5.1",
+    "less": "3.12.2",
+    "less-loader": "7.1.0",
     "mysql": "2.18.1",
+    "sass": "^1.83.0",
+    "sass-loader": "^16.0.4",
     "style-loader": "1",
     "vue-loader": "15",
     "vue-template-compiler": "^2.6.10",
