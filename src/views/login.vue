@@ -4,7 +4,7 @@
       <div class="forms-container">
         <div class="login-register-form login" :class="{ 'form-hidden': showRegister }">
           <div class="title-wrapper">
-            <div class="title">江雪休闲大厅</div>
+            <div class="title">江雪大厅</div>
             <div class="title-decoration left"></div>
             <div class="title-decoration right"></div>
           </div>
@@ -71,6 +71,7 @@ export default {
   name: "AuthForm",
   data() {
     return {
+      obj:Object.freeze({name:'zhangsan',age:18,b:{c:1,d:{e:2}}}),
       showRegister: false,
       loginForm: {
         username: "",
@@ -170,6 +171,9 @@ export default {
       this.avatarPreview = URL.createObjectURL(file);
     }
   },
+  created(){
+    console.log(this.obj);    
+  }
 };
 </script>
 
