@@ -6,6 +6,7 @@ const name = '专业在线聊天室' // page title
 module.exports = {
   publicPath: './',
   lintOnSave: false,
+  transpileDependencies: [],
   devServer: {
     open: true,
     port: 8080,
