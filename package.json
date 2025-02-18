@@ -36,8 +36,6 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "joi": "17.6.0",
-    "@hapi/hoek": "9.3.0",
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@vue/cli-plugin-babel": "4.5.19",
     "@vue/cli-plugin-eslint": "^3.0.4",
@@ -58,6 +56,11 @@
     "webpack": "^5.89.0",
     "webpack-cli": "^4.9.0",
     "cross-env": "^7.0.3"
+  },
+  "resolutions": {
+    "joi": "17.6.0",
+    "@hapi/hoek": "9.3.0",
+    "@hapi/joi": "17.1.1"
   },
   "eslintConfig": {
     "root": true,
