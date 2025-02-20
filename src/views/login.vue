@@ -4,7 +4,7 @@
       <div class="forms-container">
         <div class="login-register-form login" :class="{ 'form-hidden': showRegister }">
           <div class="title-wrapper">
-            <div class="title">江江234大厅</div>
+            <div class="title">江江1大厅</div>
             <div class="title-decoration left"></div>
             <div class="title-decoration right"></div>
           </div>
